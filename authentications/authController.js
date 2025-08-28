@@ -49,8 +49,8 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
     .update(resetCode)
     .digest("hex");
 
-  user.paswordResetCode = hashRestCode;
-  user.passwordResetCodeExpires = Date.now() + 10 * 60 * 1000;
+  user.passwordResetCode = hashRestCode;
+  user.passwordResetCodeExpires = Date.now() + 1 * 60 * 1000;
   user.passwordRestVerified = false;
   // save user after adding these new data
   await user.save({ validateBeforeSave: false });
