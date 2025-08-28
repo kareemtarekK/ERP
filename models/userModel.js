@@ -45,9 +45,12 @@ const userSchema = new mongoose.Schema({
       message: "Password are not the same try again!",
     },
   },
-  paswordResetCode: String,
+  passwordResetCode: String,
   passwordResetCodeExpires: Date,
-  passwordRestVerified: Boolean,
+  passwordResetVerified: {
+    type: Boolean,
+    default: false,
+  },
 });
 userSchema.pre("save", async function (next) {
   this.password = await bcrybt.hash(this.password, 12);

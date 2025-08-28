@@ -50,21 +50,21 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
     .digest("hex");
 
   user.passwordResetCode = hashRestCode;
-  user.passwordResetCodeExpires = Date.now() + 1 * 60 * 1000;
-  user.passwordRestVerified = false;
+  user.passwordResetCodeExpires = Date.now() + 2 * 60 * 1000;
+  user.passwordResetVerified = false;
   // save user after adding these new data
   await user.save({ validateBeforeSave: false });
   // send reset code via email
   const options = {
     email: user.email,
-    subject: "Your password reset code (valid for 10 min)",
+    subject: "Your password reset code (valid for 2 min)",
     message: `Hi ${user.tradeName}\n we received a request to reset your password on El-motakamel \n ${resetCode} \n Enter this code to compelete the reset`,
   };
 
   try {
     await sendEmail(options);
   } catch (err) {
-    user.paswordResetCode = undefined;
+    user.passwordResetCode = undefined;
     user.passwordResetCodeExpires = undefined;
     user.passwordRestVerified = undefined;
     user.save({ validateBeforeSave: false });
@@ -82,17 +82,17 @@ exports.verifiedCode = catchAsync(async (req, res, next) => {
     .update(req.body.resetCode)
     .digest("hex");
   const user = await User.findOne({
-    paswordResetCode: hasedResetCode,
+    passwordResetCode: hasedResetCode,
     passwordResetCodeExpires: { $gt: Date.now() },
   });
   if (!user) {
     return next(new AppError("Invalid reset code or expired", 400));
   }
-  user.passwordRestVerified = true;
+  user.passwordResetVerified = true;
   user.save({ validateBeforeSave: false });
   res.status(200).json({
     status: "success",
-    passwordRestVerified: true,
+    passwordResetVerified: true,
   });
 });
 exports.resetPassword = catchAsync(async (req, res, next) => {
@@ -103,9 +103,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     return next(new AppError("You are not allowed to change password", 401));
   user.password = req.body.password;
   user.confirmPassword = req.body.confirmPassword;
-  user.paswordResetCode = undefined;
+  user.passwordResetCode = undefined;
   user.passwordResetCodeExpires = undefined;
-  user.passwordRestVerified = undefined;
+  user.passwordResetVerified = undefined;
   await user.save();
   const token = createToken(user);
   res.status(200).json({
