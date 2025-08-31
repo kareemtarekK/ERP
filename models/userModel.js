@@ -7,7 +7,7 @@ const bcrybt = require("bcryptjs");
 const userSchema = new mongoose.Schema({
   tradeName: {
     type: String,
-    require: [true, "Please enter trade name"],
+    required: [true, "Please enter trade name"],
     trim: true,
   },
   email: {
@@ -27,10 +27,6 @@ const userSchema = new mongoose.Schema({
       unique: true,
     },
   },
-  website: {
-    type: String,
-    required: [true, "Please enter website link"],
-  },
   password: {
     type: String,
     required: [true, "Please enter a password"],
@@ -47,6 +43,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordResetCode: String,
   passwordResetCodeExpires: Date,
+  changePasswordAt: Date,
   passwordResetVerified: {
     type: Boolean,
     default: false,
@@ -64,6 +61,13 @@ userSchema.methods.correctPassword = async function (
 ) {
   return await bcrybt.compare(candidatePassword, password);
 };
-
+// check if user changed his password after token issued
+userSchema.methods.changePasswordAfter = function (issuedAt) {
+  let changedAt;
+  if (this.changePasswordAt) {
+    changedAt = Math.floor(new Date(this.changePasswordAt).getTime() / 1000);
+  }
+  return changedAt > issuedAt;
+};
 const User = mongoose.model("User", userSchema);
 module.exports = User;
