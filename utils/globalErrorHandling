@@ -1,3 +1,10 @@
+// handle malformed jwt
+const handleMalFormedJwt = (err, res) => {
+  return res.status(err.statusCode).json({
+    status: err.status,
+    message: "Invalied token, please login again",
+  });
+};
 //handle expires token
 const handleExpiredError = (err, res) => {
   return res.status(err.statusCode).json({
@@ -43,11 +50,13 @@ const sendErrorProd = (err, res) => {
     });
   }
   // handle duplicate error
-  if (err.code === 11000) handleDuplicationError(err, res);
+  else if (err.code === 11000) handleDuplicationError(err, res);
   // handle validation error
-  if (err.name === "ValidationError") handleValidationError(err, res);
+  else if (err.name === "ValidationError") handleValidationError(err, res);
   // handle expiration error
-  if (err.name === "TokenExpiredError") handleExpiredError(err, res);
+  else if (err.name === "TokenExpiredError") handleExpiredError(err, res);
+  // handle malformed jwt
+  else if (err.name === "JsonWebTokenError") handleMalFormedJwt(err, res);
   // genrate genric message
   else {
     return res.status(500).json({

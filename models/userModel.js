@@ -54,6 +54,11 @@ userSchema.pre("save", async function (next) {
   this.confirmPassword = undefined;
   next();
 });
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+  this.changePasswordAt = Date.now() - 1000;
+  next();
+});
 // compare passwords
 userSchema.methods.correctPassword = async function (
   candidatePassword,
@@ -63,11 +68,14 @@ userSchema.methods.correctPassword = async function (
 };
 // check if user changed his password after token issued
 userSchema.methods.changePasswordAfter = function (issuedAt) {
-  let changedAt;
   if (this.changePasswordAt) {
-    changedAt = Math.floor(new Date(this.changePasswordAt).getTime() / 1000);
+    const changedAt = parseInt(
+      new Date(this.changePasswordAt).getTime() / 1000,
+      10
+    );
+    return issuedAt < changedAt;
   }
-  return changedAt > issuedAt;
+  return false;
 };
 const User = mongoose.model("User", userSchema);
 module.exports = User;

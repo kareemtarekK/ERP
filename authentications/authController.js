@@ -116,7 +116,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetCode = undefined;
   user.passwordResetCodeExpires = undefined;
   user.passwordResetVerified = undefined;
-  user.changePasswordAt = Date.now();
   await user.save();
   sendTokenViaCookie(user, res, 200);
 });
