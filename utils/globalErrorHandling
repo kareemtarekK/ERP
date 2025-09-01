@@ -1,3 +1,10 @@
+//handle expires token
+const handleExpiredError = (err, res) => {
+  return res.status(err.statusCode).json({
+    status: err.status,
+    message: "Your token has expired, please login again",
+  });
+};
 // handle duplicate error
 const handleDuplicationError = (err, res) => {
   const regex = /dup key:\s*\{\s*([^:]+):\s*"([^"]+)"\s*\}/;
@@ -40,6 +47,7 @@ const sendErrorProd = (err, res) => {
   // handle validation error
   if (err.name === "ValidationError") handleValidationError(err, res);
   // handle expiration error
+  if (err.name === "TokenExpiredError") handleExpiredError(err, res);
   // genrate genric message
   else {
     return res.status(500).json({
