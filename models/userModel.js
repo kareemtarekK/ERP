@@ -1,13 +1,12 @@
 const req = require("express/lib/request");
-const { type } = require("express/lib/response");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrybt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
-  tradeName: {
+  fullname: {
     type: String,
-    required: [true, "Please enter trade name"],
+    required: [true, "Please enter full name"],
     trim: true,
   },
   email: {
@@ -47,6 +46,27 @@ const userSchema = new mongoose.Schema({
   passwordResetVerified: {
     type: Boolean,
     default: false,
+  },
+  organizations: [
+    {
+      organization_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "organization",
+      },
+    },
+  ],
+  role: {
+    type: String,
+    required: [true, "Please specify user role"],
+  },
+  avatar: String,
+  created_at: {
+    type: Date,
+    default: Date.now,
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now,
   },
 });
 userSchema.pre("save", async function (next) {
