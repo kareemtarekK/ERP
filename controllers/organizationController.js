@@ -11,3 +11,18 @@ exports.createOrganization = catchAsync(async (req, res, next) => {
     },
   });
 });
+exports.getOrganization = catchAsync(async (req, res, next) => {
+  const { organizationId } = req.params;
+  if (!organizationId) return next(new AppError("Please provide id", 500));
+  const organization = await Organization.findById(organizationId).populate(
+    "customers"
+  );
+  if (!organization)
+    return next(new AppError("No organization found with that id", 404));
+  res.status(200).json({
+    status: "success",
+    data: {
+      organization,
+    },
+  });
+});

@@ -10,7 +10,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     },
   });
 });
-exports.getAllproducts = catchAsync(async (req, res, next) => {
+exports.getAllProducts = catchAsync(async (req, res, next) => {
   const products = await Product.find();
   res.status(200).json({
     status: "success",
@@ -35,7 +35,7 @@ exports.getProduct = catchAsync(async (req, res, next) => {
 exports.updateProduct = catchAsync(async (req, res, next) => {
   const { productId } = req.params;
   if (!productId) return next(new AppError("Please provide product id", 500));
-  const product = await Product.findByIdAndUpdate(productId, req.bodyc, {
+  const product = await Product.findByIdAndUpdate(productId, req.body, {
     runValidators: true,
     new: true,
   });
@@ -48,9 +48,9 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
   });
 });
 exports.deleteProduct = catchAsync(async (req, res, next) => {
-  const { producId } = req.params;
-  if (!producId) return next(new AppError("Please provide product id", 500));
-  await Product.findByIdAndDelete(producId);
+  const { productId } = req.params;
+  if (!productId) return next(new AppError("Please provide product id", 500));
+  await Product.findByIdAndDelete(productId);
   res.status(204).json({
     status: "success",
     content: null,
