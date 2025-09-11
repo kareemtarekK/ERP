@@ -40,5 +40,10 @@ organizationSchema.pre("save", async function (next) {
   await user.save({ validateBeforeSave: false });
   next();
 });
+organizationSchema.virtual("customers", {
+  ref: "Customer",
+  localField: "_id",
+  foreignField: "organizationId",
+});
 const Organization = mongoose.model("Organization", organizationSchema);
 module.exports = Organization;
