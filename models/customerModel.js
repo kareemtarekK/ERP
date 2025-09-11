@@ -9,15 +9,15 @@ const customerSchema = new mongoose.Schema(
       minlength: 2,
       maxlength: 150,
     },
-    organizationId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Organization",
-    },
+    organizationId: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Organization",
+      },
+    ],
     email: {
       type: String,
       validate: [validator.isEmail, "enter valid email 💥"],
-      unique: true,
-      sparse: true,
     },
     phone: {
       type: String,
@@ -63,9 +63,17 @@ const customerSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toObject: {
+      virtuals: true,
+    },
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
 
-const Customer = mongoose.model("customer", customerSchema);
+const Customer = mongoose.model("Customer", customerSchema);
 
 module.exports = Customer;
