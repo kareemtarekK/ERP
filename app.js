@@ -5,6 +5,7 @@ const userRouter = require("./routers/userRouter");
 const organizationRouter = require("./routers/organizationRouter");
 const productRouter = require("./routers/productRouter.js");
 const customerRouter = require("./routers/customerRouter.js");
+const supplierRouter = require("./routers/supplierRouter.js");
 const authRouter = require("./authRouters/authRouter");
 const globalErrorHandling = require("./utils/globalErrorHandling");
 const AppError = require("./utils/appError");
@@ -17,6 +18,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/organizations", organizationRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/customers", customerRouter);
+app.use("/api/v1/suppliers", supplierRouter);
 app.use("/", (req, res, next) => {
   res.send("Welcome");
 });

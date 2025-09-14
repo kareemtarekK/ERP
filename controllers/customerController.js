@@ -31,7 +31,10 @@ exports.getAllCustomers = catchAsync(async (req, res, next) => {
 exports.getCustomer = catchAsync(async (req, res, next) => {
   const { customerId } = req.params;
   if (!customerId) return next(new AppError("Please provide id", 500));
-  const customer = await Customer.findById(customerId);
+  const customer = await Customer.findOne({
+    _id: customerId,
+    isDeleted: false,
+  });
   if (!customer)
     return next(new AppError("No customer found with that id", 404));
   res.status(200).json({
