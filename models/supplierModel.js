@@ -1,7 +1,7 @@
-const moongoose = require("mongoose");
+const mongoose = require("mongoose");
 const validator = require("validator");
 
-constsupplierSchema = new mongoose.Schema(
+const supplierSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -9,7 +9,7 @@ constsupplierSchema = new mongoose.Schema(
       trim: true,
     },
     email: {
-      type: true,
+      type: String,
       validate: [validator.isEmail, "Please provide a valid email"],
     },
     address: {
@@ -27,19 +27,19 @@ constsupplierSchema = new mongoose.Schema(
     },
     organizationId: [
       {
-        type: moongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Organization",
         required: [true, "Supplier must belong to an organization"],
       },
     ],
     createdBy: {
-      type: mongoose.Schema.Types.OgjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "Supplier must have a creator"],
     },
     isDeleted: {
       type: Boolean,
-      dafault: false,
+      default: false,
     },
   },
   {
@@ -48,4 +48,4 @@ constsupplierSchema = new mongoose.Schema(
 );
 
 const Supplier = mongoose.model("Supplier", supplierSchema);
-modeule.exports = Supplier;
+module.exports = Supplier;

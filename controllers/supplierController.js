@@ -16,8 +16,10 @@ exports.createSupplier = catchAsync(async (req, res, next) => {
 // all suppliers
 exports.getAllSuppliers = catchAsync(async (req, res, next) => {
   const suppliers = await Supplier.find({ isDeleted: false });
+  if (!suppliers) return next(new AppError("No suppliers found", 404));
   res.status(200).json({
     status: "success",
+    result: suppliers.length,
     data: {
       suppliers,
     },
@@ -30,6 +32,8 @@ exports.getSupplier = catchAsync(async (req, res, next) => {
     _id: req.params.supplierId,
     isDeleted: false,
   }).populate("organizationId");
+  if (!supplier)
+    return next(new AppError("No supplier found with that ID", 404));
   res.status(200).json({
     status: "success",
     data: {
@@ -48,6 +52,8 @@ exports.updateSupplier = catchAsync(async (req, res, next) => {
       new: true,
     }
   );
+  if (!updatedSupplier)
+    return next(new AppError("No supplier found with that ID", 404));
   res.status(200).json({
     status: "success",
     data: {
@@ -67,9 +73,16 @@ exports.deleteSupplier = catchAsync(async (req, res, next) => {
 
 // soft delete supplier
 exports.softDeleteSupplier = catchAsync(async (req, res, next) => {
-  const deletedSupplier = await findByIdAndUpdate(req.params.supplierId, {
-    isDeleted: true,
-  });
+  const deletedSupplier = await Supplier.findByIdAndUpdate(
+    req.params.supplierId,
+    {
+      isDeleted: true,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
   res.status(200).json({
     status: "success deleted ✅",
     data: deletedSupplier,
@@ -82,10 +95,31 @@ exports.getOrganizationSuppliers = catchAsync(async (req, res, next) => {
   const suppliers = await Supplier.find({
     organizationId: { $in: [organizationId] },
   });
+  if (!suppliers)
+    return next(new AppError("No suppliers found for this organization", 404));
   res.status(200).json({
     status: "success",
     data: {
       suppliers,
+    },
+  });
+});
+// add another organization to supplier
+exports.addOrganization = catchAsync(async (req, res, next) => {
+  const { supplierId, organizationId } = req.params;
+  if (!supplierId || !organizationId)
+    return next(new AppError("provide supplierId and organizationId"));
+  const updatedSupplier = await Supplier.findByIdAndUpdate(
+    supplierId,
+    {
+      $addToSet: { organizationId: req.params.organizationId },
+    },
+    { new: true }
+  );
+  res.status(200).json({
+    status: "success",
+    data: {
+      updatedSupplier,
     },
   });
 });

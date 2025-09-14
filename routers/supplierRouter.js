@@ -7,6 +7,7 @@ const {
   deleteSupplier,
   softDeleteSupplier,
   getOrganizationSuppliers,
+  addOrganization,
 } = require("./../controllers/supplierController");
 const supplierRouter = express.Router();
 
@@ -20,6 +21,7 @@ supplierRouter
 
 supplierRouter.patch("/softDelete/:supplierId", softDeleteSupplier);
 
-supplierRouter.get("/:organizationId/suppliers", getOrganizationSuppliers);
+supplierRouter.get("/:organizationId/allSuppliers", getOrganizationSuppliers);
+supplierRouter.route("/:supplierId/:organizationId").patch(addOrganization);
 
 module.exports = supplierRouter;
