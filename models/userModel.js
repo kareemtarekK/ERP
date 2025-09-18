@@ -58,6 +58,10 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     required: [true, "Please specify user role"],
+    enum: {
+      values: ["admin", "employee", "customer", "supplier", "CEO"],
+      message: "select valid role: admin, employee, customer, supplier, CEO",
+    },
   },
   avatar: String,
   created_at: {
