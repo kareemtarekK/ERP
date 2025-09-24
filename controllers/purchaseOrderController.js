@@ -44,3 +44,24 @@ exports.deletePurchaseOrder = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+// get all purchases
+exports.getAllPurchases = catchAsync(async (req, res, next) => {
+  const purchases = await PurchaseOrder.find({});
+  res.status(200).json({
+    status: "success",
+    length: purchases.length,
+    data: {
+      purchases,
+    },
+  });
+});
+// get purchase
+exports.getpurchase = catchAsync(async (req, res, next) => {
+  const purchase = await PurchaseOrder.findById(req.params.purchaseOrderId);
+  res.status(200).json({
+    status: "success",
+    data: {
+      purchase,
+    },
+  });
+});

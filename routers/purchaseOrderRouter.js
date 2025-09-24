@@ -3,11 +3,14 @@ const {
   createPurchaseOrder,
   updatePurchaseOrder,
   deletePurchaseOrder,
+  getAllPurchases,
+  getpurchase,
 } = require("../controllers/purchaseOrderController");
 const router = express.Router();
-router.post("/", createPurchaseOrder);
+router.route("/").post(createPurchaseOrder).get(getAllPurchases);
 router
   .route("/:purchaseOrderId")
+  .get(getpurchase)
   .patch(updatePurchaseOrder)
   .delete(deletePurchaseOrder);
 module.exports = router;
