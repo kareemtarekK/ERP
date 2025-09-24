@@ -73,8 +73,6 @@ purchaseOrderSchema.pre("save", function (next) {
     (acc, current) => acc + current.total,
     0
   );
-  const invoiceNum = Math.floor(Math.random() * 600000);
-  this.invoiceNumber = `INV-` + invoiceNum;
   next();
 });
 const PurchaseOrder = mongoose.model("PurchaseOrder", purchaseOrderSchema);
