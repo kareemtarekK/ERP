@@ -13,7 +13,6 @@ const purchaseOrderSchema = new mongoose.Schema(
     },
     invoiceNumber: {
       type: String,
-      required: [true, "Invoice number is required"],
       unique: true,
       trim: true,
     },
@@ -60,7 +59,7 @@ const purchaseOrderSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "Purchase order must have a creator"],
     },
-    tatalAmount: Number,
+    totalAmount: Number,
   },
   { timestamps: true }
 );
@@ -74,6 +73,9 @@ purchaseOrderSchema.pre("save", function (next) {
     (acc, current) => acc + current.total,
     0
   );
+  // create random invoiceNumber
+  const randomNum = Math.floor(Math.random() * 600000);
+  this.invoiceNumber = `INV-${randomNum}-000`;
   next();
 });
 const PurchaseOrder = mongoose.model("PurchaseOrder", purchaseOrderSchema);
