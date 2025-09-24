@@ -33,7 +33,7 @@ exports.updatePurchaseOrder = catchAsync(async (req, res, next) => {
     },
   });
 });
-// delete purchase order
+// delete a purchase order
 exports.deletePurchaseOrder = catchAsync(async (req, res, next) => {
   const { purchaseOrderId } = req.params;
   if (!purchaseOrderId)
