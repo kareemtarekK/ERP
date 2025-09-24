@@ -56,3 +56,17 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
     content: null,
   });
 });
+// search for product
+exports.searchProduct = catchAsync(async (req, res, next) => {
+  const { name } = req.query;
+  const products = await Product.find({
+    name: { $regex: name, $options: "i" },
+  });
+  res.status(200).json({
+    status: "success",
+    results: products.length,
+    data: {
+      products,
+    },
+  });
+});
