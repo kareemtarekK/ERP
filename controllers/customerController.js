@@ -27,7 +27,7 @@ exports.getAllCustomers = catchAsync(async (req, res, next) => {
     },
   });
 });
-// get a customer
+// get a specific customer
 exports.getCustomer = catchAsync(async (req, res, next) => {
   const { customerId } = req.params;
   if (!customerId) return next(new AppError("Please provide id", 500));
@@ -44,7 +44,7 @@ exports.getCustomer = catchAsync(async (req, res, next) => {
     },
   });
 });
-// update customer
+// update a customer
 exports.updateCustomer = catchAsync(async (req, res, next) => {
   const { customerId } = req.params;
   if (!customerId) return next(new AppError("Please provide id", 500));
@@ -75,7 +75,7 @@ exports.deleteCustomer = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
-
+// soft delete
 exports.softDelete = catchAsync(async (req, res, next) => {
   const { customerId } = req.params;
   if (!customerId) return next(new AppError("Please provide id", 500));
