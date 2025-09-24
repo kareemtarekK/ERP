@@ -73,7 +73,6 @@ purchaseOrderSchema.pre("save", function (next) {
     (acc, current) => acc + current.total,
     0
   );
-  // create random invoiceNumber
   const randomNum = Math.floor(Math.random() * 600000);
   this.invoiceNumber = `INV-${randomNum}-000`;
   next();
