@@ -8,6 +8,7 @@ const customerRouter = require("./routers/customerRouter.js");
 const supplierRouter = require("./routers/supplierRouter.js");
 const purchaseOrderRouter = require("./routers/purchaseOrderRouter.js");
 const inventoryRouter = require("./routers/inventoryRouter.js");
+const stockRouter = require("./routers/stockRouter.js");
 const authRouter = require("./authRouters/authRouter");
 const globalErrorHandling = require("./utils/globalErrorHandling");
 const AppError = require("./utils/appError");
@@ -23,6 +24,7 @@ app.use("/api/v1/customers", customerRouter);
 app.use("/api/v1/suppliers", supplierRouter);
 app.use("/api/v1/purchaseOrders", purchaseOrderRouter);
 app.use("/api/v1/inventories", inventoryRouter);
+app.use("/api/v1/stocks", stockRouter);
 app.use("/", (req, res, next) => {
   res.send("Welcome");
 });
