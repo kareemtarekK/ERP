@@ -1,6 +1,6 @@
 const Inventory = require("../models/inventory");
 const AppError = require("./../utils/appError.js");
-
+const catchAsync = require("./../utils/catchAsync");
 // create inventory
 exports.createInventory = catchAsync(async (req, res, next) => {
   const newInventory = await Inventory.create(req.body);
