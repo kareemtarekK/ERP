@@ -19,5 +19,6 @@ const stockSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+stockSchema.index({ productId: 1, inventoryId: 1 }, { unique: true });
 const Stock = mongoose.model("Stock", stockSchema);
 module.exports = Stock;

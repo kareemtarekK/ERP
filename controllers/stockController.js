@@ -3,7 +3,10 @@ const catchAsync = require("../utils/catchAsync");
 const Stock = require("./../models/stockModel");
 // add product to inventory
 exports.addStockToInventory = catchAsync(async (req, res, next) => {
-  const stock = await Stock.create(req.body);
+  const { inventoryId } = req.params;
+  if (!inventoryId)
+    return next(new AppError("there is no inventoryId provided", 500));
+  const stock = await Stock.create({ inventoryId, ...req.body });
   res.status(201).json({
     status: "success",
     data: {
@@ -46,7 +49,7 @@ exports.updateStock = catchAsync(async (req, res, next) => {
 
 // deletestock inventory details
 exports.deleteStock = catchAsync(async (req, res, next) => {
-  const { stockId } = req.aparms;
+  const { stockId } = req.params;
   const stock = await Stock.findById(stockId);
   if (!stock)
     return next(new AppError("there is no stock found on FileSystem", 404));

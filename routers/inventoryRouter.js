@@ -9,7 +9,7 @@ const {
 const {
   addStockToInventory,
   getStock,
-} = require("./../controllers/stockControlller.js");
+} = require("./../controllers/stockController.js");
 const inventoryRouter = express.Router();
 
 inventoryRouter.route("/").post(createInventory).get(getAllInventories);
@@ -19,9 +19,7 @@ inventoryRouter
   .get(getInventory)
   .patch(updateInventory)
   .delete(deleteInventory);
-inventoryRouter
-  .route("/:inventoryId/stock")
-  .post(addStockToInventory)
-  .get(getStock);
+inventoryRouter.get("/:inventoryId/stocks/:stockId", getStock);
+inventoryRouter.post("/:inventoryId/stock/", addStockToInventory);
 
 module.exports = inventoryRouter;
