@@ -1,6 +1,6 @@
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
-
+const Stock = require("./../models/stockModel");
 // add product to inventory
 exports.addStockToInventory = catchAsync(async (req, res, next) => {
   const stock = await Stock.create(req.body);
