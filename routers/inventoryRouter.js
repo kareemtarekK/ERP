@@ -1,7 +1,7 @@
 const express = require("express");
 const {
   createInventory,
-  getAllInventory,
+  getAllInventories,
   getInventory,
   updateInventory,
   deleteInventory,

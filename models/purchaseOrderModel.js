@@ -50,8 +50,8 @@ const purchaseOrderSchema = new mongoose.Schema(
     currency: String,
     status: {
       type: String,
-      enum: ["pending", "approved", "shipped", "delivered", "canceled"],
-      default: "pending",
+      enum: ["draft", "approved", "shipped", "delivered", "canceled"],
+      default: "draft",
     },
     notes: String,
     createdBy: {
