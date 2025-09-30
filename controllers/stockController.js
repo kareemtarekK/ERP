@@ -1,6 +1,7 @@
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Stock = require("./../models/stockModel");
+const PurchaseOrder = require("./../models/purchaseOrderModel");
 // add product to inventory
 exports.addStockToInventory = catchAsync(async (req, res, next) => {
   const { inventoryId } = req.params;
@@ -57,5 +58,46 @@ exports.deleteStock = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: "success",
     data: null,
+  });
+});
+
+exports.stockIn = catchAsync(async (req, res, next) => {
+  const { purchaseOrderId } = req.params;
+  if (!purchaseOrderId)
+    return next(new AppError("Order id is not provided", 500));
+  const purchaseOrder = await PurchaseOrder.findById(purchaseOrderId);
+  if (!purchaseOrder || purchaseOrder.status === "delivered")
+    return next(
+      new AppError(
+        "No purchase order found with that ID or order delivered",
+        500
+      )
+    );
+  let stock;
+  const { products } = purchaseOrder;
+  for (let product of products) {
+    const { inventoryId, productId, quantity } = product;
+    stock = await Stock.findOne({ productId, inventoryId });
+    if (stock) {
+      stock.quantity += quantity;
+      await stock.save({ validateBeforeSave: false });
+    } else {
+      await Stock.create({ productId, inventoryId, quantity });
+    }
+  }
+  // update purchase order status to delivered
+  const updatedPurchaseOrder = await PurchaseOrder.findByIdAndUpdate(
+    purchaseOrderId,
+    { status: "delivered" },
+    {
+      new: true,
+    }
+  );
+  res.status(200).json({
+    status: "success",
+    message: "stock charged successfully",
+    data: {
+      updatedPurchaseOrder,
+    },
   });
 });

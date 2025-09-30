@@ -41,6 +41,10 @@ const purchaseOrderSchema = new mongoose.Schema(
         total: {
           type: Number,
         },
+        inventoryId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Inventory",
+        },
       },
     ],
     expectedDeliveryDate: {
