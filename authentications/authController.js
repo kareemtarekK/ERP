@@ -24,6 +24,7 @@ const sendTokenViaCookie = (user, res, statusCode) => {
   res.status(statusCode).json({
     status: "success",
     token,
+    user,
   });
 };
 exports.login = catchAsync(async (req, res, next) => {
