@@ -1,6 +1,7 @@
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Stock = require("./../models/stockModel");
+const PurchaseOrder = require("./../models/purchaseOrderModel");
 // add product to inventory
 exports.addStockToInventory = catchAsync(async (req, res, next) => {
   const { inventoryId } = req.params;
@@ -59,3 +60,37 @@ exports.deleteStock = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+// alternative middleware to stock in
+
+// exports.stockIn = catchAsync(async (req, res, next) => {
+//   const { purchaseOrderId } = req.params;
+//   const purchaseOrder = await PurchaseOrder.findById(purchaseOrderId);
+//   if (!purchaseOrder)
+//     return next(new AppError("purchaseOrder not found on the system", 404));
+//   const { products } = purchaseOrder;
+//   if (purchaseOrder.status === "delivered")
+//     return next(new AppError("purchaseOrder is already delivered", 400));
+//   for (let product of products) {
+//     const { inventoryId, productId, quantity } = product;
+//     const stock = await Stock.findOne({
+//       productId,
+//       inventoryId,
+//     });
+//     if (stock) {
+//       stock.quantity += quantity;
+//       await stock.save({ validateBeforeSave: false });
+//     } else {
+//       await Stock.create({ inventoryId, productId, quantity });
+//     }
+//   }
+//   purchaseOrder.status = "delivered";
+//   await PurchaseOrder.save({ validateBeforeSave: false });
+//   res.status(200).json({
+//     status: "stock in is done successfully ✅",
+//     data: {
+//       purchaseOrder,
+//       stock,
+//     },
+//   });
+// });

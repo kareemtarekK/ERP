@@ -12,8 +12,8 @@ const inventorySchema = new mongoose.Schema(
       trim: true,
     },
     capacity: {
-      type: String,
-      trim: true,
+      type: Number,
+      min: [0, "capacity can`t be negative"],
     },
   },
   { timestamps: true }
