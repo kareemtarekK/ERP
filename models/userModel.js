@@ -3,76 +3,71 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrybt = require("bcryptjs");
 
-const userSchema = new mongoose.Schema({
-  fullname: {
-    type: String,
-    required: [true, "Please enter full name"],
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: [true, "Please enter email"],
-    unique: true,
-    validate: [validator.isEmail, "Please enter a valid email"],
-  },
-  phone: {
-    countryCode: {
+const userSchema = new mongoose.Schema(
+  {
+    fullname: {
       type: String,
-      required: [true, "Select the country code"],
+      required: [true, "Please enter full name"],
+      trim: true,
     },
-    phoneNumber: {
+    email: {
       type: String,
-      required: [true, "Enter your phone number"],
+      required: [true, "Please enter email"],
       unique: true,
+      validate: [validator.isEmail, "Please enter a valid email"],
     },
-  },
-  password: {
-    type: String,
-    required: [true, "Please enter a password"],
-  },
-  confirmPassword: {
-    type: String,
-    required: [true, "Please enter a confirm password"],
-    validate: {
-      validator: function (el) {
-        return el === this.password;
+    phone: {
+      countryCode: {
+        type: String,
+        required: [true, "Select the country code"],
       },
-      message: "Password are not the same try again!",
-    },
-  },
-  passwordResetCode: String,
-  passwordResetCodeExpires: Date,
-  changePasswordAt: Date,
-  passwordResetVerified: {
-    type: Boolean,
-    default: false,
-  },
-  organizations: [
-    {
-      organization_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "organization",
+      phoneNumber: {
+        type: String,
+        required: [true, "Enter your phone number"],
+        unique: true,
       },
     },
-  ],
-  role: {
-    type: String,
-    required: [true, "Please specify user role"],
-    enum: {
-      values: ["admin", "employee", "customer", "supplier", "CEO"],
-      message: "select valid role: admin, employee, customer, supplier, CEO",
+    password: {
+      type: String,
+      required: [true, "Please enter a password"],
     },
+    confirmPassword: {
+      type: String,
+      required: [true, "Please enter a confirm password"],
+      validate: {
+        validator: function (el) {
+          return el === this.password;
+        },
+        message: "Password are not the same try again!",
+      },
+    },
+    passwordResetCode: String,
+    passwordResetCodeExpires: Date,
+    changePasswordAt: Date,
+    passwordResetVerified: {
+      type: Boolean,
+      default: false,
+    },
+    organizations: [
+      {
+        organization_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "organization",
+        },
+      },
+    ],
+    role: {
+      type: String,
+      required: [true, "Please specify user role"],
+      enum: {
+        values: ["admin", "employee", "customer", "supplier", "CEO"],
+        message: "select valid role: admin, employee, customer, supplier, CEO",
+      },
+    },
+    avatar: String,
   },
-  avatar: String,
-  created_at: {
-    type: Date,
-    default: Date.now,
-  },
-  updated_at: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true }
+);
 userSchema.pre("save", async function (next) {
   this.password = await bcrybt.hash(this.password, 12);
   this.confirmPassword = undefined;

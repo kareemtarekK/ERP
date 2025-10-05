@@ -2,6 +2,7 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Stock = require("./../models/stockModel");
 const PurchaseOrder = require("./../models/purchaseOrderModel");
+const StockMovement = require("./../models/stockMovementModel");
 // add product to inventory
 exports.addStockToInventory = catchAsync(async (req, res, next) => {
   const { inventoryId } = req.params;
@@ -106,7 +107,7 @@ exports.stockIn = catchAsync(async (req, res, next) => {
         500
       )
     );
-  let stock;
+  let stock, stockMovement;
   const { products } = purchaseOrder;
   for (let product of products) {
     const { inventoryId, productId, quantity } = product;
@@ -116,6 +117,32 @@ exports.stockIn = catchAsync(async (req, res, next) => {
       await stock.save({ validateBeforeSave: false });
     } else {
       await Stock.create({ productId, inventoryId, quantity });
+    }
+    const movement = await StockMovement.findOne({
+      inventoryId,
+      productId,
+    });
+    if (movement) {
+      stockMovement = await StockMovement.create({
+        productId,
+        inventoryId,
+        orderType: "PurchaseOrder",
+        referenceId: purchaseOrderId,
+        type: "IN",
+        oldQuantity: movement.newQuantity,
+        quantity,
+        newQuantity: movement.newQuantity + quantity,
+      });
+    } else {
+      stockMovement = await StockMovement.create({
+        productId,
+        inventoryId,
+        orderType: "PurchaseOrder",
+        referenceId: purchaseOrderId,
+        type: "IN",
+        quantity,
+        newQuantity: quantity,
+      });
     }
   }
   // update purchase order status to delivered
