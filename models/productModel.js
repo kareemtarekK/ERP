@@ -26,14 +26,19 @@ const productSchema = new mongoose.Schema(
       minlength: 5,
     },
     category: {
-      type: String,
-      trim: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: "select category for your product",
     },
-    unit: String,
+    unit: Number,
     img: [String],
+    total: Number,
   },
   { timestamps: true }
 );
-
+productSchema.pre("save", function (next) {
+  this.total = this.unit * this.price;
+  next();
+});
 const Product = mongoose.model("Product", productSchema);
 module.exports = Product;

@@ -6,12 +6,13 @@ const {
   updateProduct,
   deleteProduct,
   searchProduct,
+  allProductsForCategory,
 } = require("./../controllers/productController.js");
 const productRouter = express.Router();
 
 productRouter.route("/").get(getAllProducts).post(createProduct);
 productRouter.get("/search", searchProduct);
-
+productRouter.get("/:categoryId/products", allProductsForCategory);
 productRouter
   .route("/:productId")
   .patch(updateProduct)
