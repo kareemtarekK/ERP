@@ -71,18 +71,14 @@ exports.searchProduct = catchAsync(async (req, res, next) => {
   });
 });
 
+// all products for category
 exports.allProductsForCategory = catchAsync(async (req, res, next) => {
   const { categoryId } = req.params;
-  if (!categoryId)
-    return next(
-      new AppError("please provide categoryId to get all products", 404)
-    );
-  const products = await Product.find({
-    category: categoryId,
-  }).select("-__v");
+  if (!categoryId) return next(new AppError("Please provide category id", 500));
+  const products = await Product.find({ category: categoryId }).select("-__v");
   res.status(200).json({
     status: "success",
-    length: products.length,
+    results: products.length,
     data: {
       products,
     },

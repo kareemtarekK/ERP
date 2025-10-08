@@ -9,11 +9,9 @@ const {
 const categoryRouter = express();
 
 categoryRouter.route("/").post(createCategory).get(getAllCategories);
-
 categoryRouter
   .route("/:categoryId")
   .get(getCategory)
   .patch(updateCategory)
   .delete(deleteCategory);
-
 module.exports = categoryRouter;
