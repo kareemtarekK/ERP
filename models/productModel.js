@@ -26,10 +26,11 @@ const productSchema = new mongoose.Schema(
       minlength: 5,
     },
     category: {
-      type: String,
-      trim: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "category",
+      required: "select category for your product",
     },
-    unit: String,
+    unit: Number,
     img: [String],
   },
   { timestamps: true }

@@ -70,3 +70,21 @@ exports.searchProduct = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.allProductsForCategory = catchAsync(async (req, res, next) => {
+  const { categoryId } = req.params;
+  if (!categoryId)
+    return next(
+      new AppError("please provide categoryId to get all products", 404)
+    );
+  const products = await Product.find({
+    category: categoryId,
+  }).select("-__v");
+  res.status(200).json({
+    status: "success",
+    length: products.length,
+    data: {
+      products,
+    },
+  });
+});

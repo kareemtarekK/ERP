@@ -6,6 +6,7 @@ const {
   updateProduct,
   deleteProduct,
   searchProduct,
+  allProductsForCategory,
 } = require("./../controllers/productController.js");
 const productRouter = express.Router();
 
@@ -17,5 +18,7 @@ productRouter
   .patch(updateProduct)
   .get(getProduct)
   .delete(deleteProduct);
+
+productRouter.get("/:categoryId/products", allProductsForCategory);
 
 module.exports = productRouter;
