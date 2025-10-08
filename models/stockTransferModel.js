@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Product = require("./productModel");
 const stockTransferSchema = new mongoose.Schema(
   {
     status: {
@@ -31,12 +32,14 @@ const stockTransferSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-stockTransferSchema.pre("save", function (next) {
-  const totalAmount = this.products.reduce(
-    (acc, current) => acc + current.total,
-    0
+stockTransferSchema.pre("save", async function (next) {
+  const totalArray = await Promise.all(
+    this.products.map(async (product) => {
+      return await Product.findById(product.productId);
+    })
   );
-  this.total = totalAmount + this.shippingCost;
+  const amount = totalArray.reduce((acc, current) => acc + current.total, 0);
+  this.total = amount + this.shippingCost;
   next();
 });
 const StockTransfer = mongoose.model("StockTransfer", stockTransferSchema);
