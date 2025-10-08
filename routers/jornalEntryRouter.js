@@ -1,4 +1,5 @@
 const express = require("express");
+// journal entry
 const jornalEntryRouter = express.Router();
 const {
   createJornalEntry,
