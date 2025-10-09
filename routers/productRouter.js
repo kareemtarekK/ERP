@@ -19,4 +19,6 @@ productRouter
   .get(getProduct)
   .delete(deleteProduct);
 
+productRouter.get("/:categoryId/products", allProductsForCategory);
+
 module.exports = productRouter;

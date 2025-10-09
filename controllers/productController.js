@@ -70,6 +70,7 @@ exports.searchProduct = catchAsync(async (req, res, next) => {
     },
   });
 });
+
 // all products for category
 exports.allProductsForCategory = catchAsync(async (req, res, next) => {
   const { categoryId } = req.params;
