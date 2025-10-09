@@ -14,7 +14,7 @@ const stockSchema = new mongoose.Schema(
     quantity: {
       type: Number,
       required: [true, "quantity is required"],
-      min: [0, "auantity can not be negative"],
+      min: [0, "quantity can not be negative"],
     },
   },
   { timestamps: true }
