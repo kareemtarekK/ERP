@@ -21,7 +21,7 @@
 //     },
 //   });
 // });
-
+// comments
 // exports.deleteAccount = catchAsync(async (req, res, next) => {
 //   const { accountId } = req.params;
 //   const account = await Account.findById(accountId);
