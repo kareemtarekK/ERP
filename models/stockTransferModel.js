@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
-
 const Product = require("./../models/productModel");
-
 const stockTransferSchema = new mongoose.Schema(
   {
     status: {
