@@ -46,5 +46,6 @@ loanSchema.pre("save", function (next) {
   this.installmentAmount = this.totalPayable / this.installmentNumber;
   next();
 });
+// model
 const Loan = mongoose.model("Loan", loanSchema);
 module.exports = Loan;
