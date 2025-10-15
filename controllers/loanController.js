@@ -1,6 +1,10 @@
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const Loan = require("./../models/loanModel");
+const Account = require("./../models/accountingModel");
+const Jornal = require("./../models/jornalModel");
+const JornalEntry = require("./../models/jornalEntryModel");
+
 const LoanInstallment = require("./../models/loanInstallmentModel");
 
 exports.createLoan = catchAsync(async (req, res, next) => {
@@ -82,9 +86,29 @@ exports.markAsApproved = catchAsync(async (req, res, next) => {
       ),
     });
   }
-  res.status(200).json({
+  const debitAccount = await Account.findOne({ name: "loan payable" });
+  const creditAccount = await Account.findOne({ name: "cash/bank" });
+  const jornal = await Account.findOne({ jornalType: "loan" });
+  await JornalEntry.create({
+    jornalId: jornal._id,
+    lines: [
+      {
+        accountId: debitAccount._id,
+        description: `To record cash received from the bank as loan proceeds: ${loan.totalPayable}`,
+        debit: loan.totalPayable,
+      },
+      {
+        accountId: creditAccount._id,
+        description: `To recognize the loan liability owed to the bank: ${loan.totalPayable}`,
+        credit: loan.totalPayable,
+      },
+    ],
+  });
+  loan.status = "active";
+  await loan.save({ validateBeforeSave: false });
+  await res.status(200).json({
     status: "success",
     message:
-      "loan approved and you should be ready to pay each of installments",
+      "loan approved and be active now, you should be ready to pay each of installments",
   });
 });
