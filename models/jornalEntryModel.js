@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Account = require("./accountingModel");
 const jornalEntrySchema = new mongoose.Schema(
   {
     jornalId: {
