@@ -3,6 +3,7 @@ const catchAsync = require("../utils/catchAsync");
 const Stock = require("./../models/stockModel");
 const PurchaseOrder = require("./../models/purchaseOrderModel");
 const StockMovement = require("./../models/stockMovementModel");
+const Inventory = require("../models/inventoryModel");
 // add product to inventory
 exports.addStockToInventory = catchAsync(async (req, res, next) => {
   const { inventoryId } = req.params;
@@ -113,10 +114,16 @@ exports.stockIn = catchAsync(async (req, res, next) => {
     const { inventoryId, productId, quantity } = product;
     stock = await Stock.findOne({ productId, inventoryId });
     if (stock) {
+      const inventory = await Inventory.findById(inventoryId);
       stock.quantity += quantity;
       await stock.save({ validateBeforeSave: false });
+      inventory.capacity -= quantity;
+      await inventory.save({ validateBeforeSave: false });
     } else {
-      await Stock.create({ productId, inventoryId, quantity });
+      stock = await Stock.create({ productId, inventoryId, quantity });
+      const inventory = await Inventory.findById(inventoryId);
+      inventory.capacity -= quantity;
+      await inventory.save({ validateBeforeSave: false });
     }
     const movement = await StockMovement.findOne({
       inventoryId,

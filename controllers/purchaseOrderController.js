@@ -1,8 +1,18 @@
 const PurchaseOrder = require("./../models/purchaseOrderModel");
+const Inventory = require("./../models/inventoryModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 // create purchase order
 exports.createPurchaseOrder = catchAsync(async (req, res, next) => {
+  // check if the quantity of each product less than inventory's capacity
+  const { products } = req.body;
+  for (let product of products) {
+    const inventory = await Inventory.findById(product.inventoryId);
+    if (product.quantity > inventory.capacity)
+      return next(
+        new AppError("inventory can't accecpt this large quantity", 500)
+      );
+  }
   const purchaseOrder = await PurchaseOrder.create(req.body);
   res.status(201).json({
     status: "success",
