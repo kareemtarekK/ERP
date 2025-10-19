@@ -44,6 +44,7 @@ loanSchema.pre("save", function (next) {
   this.totalPayable =
     this.loanAmount + (this.interestRate * this.loanAmount) / 100;
   this.installmentAmount = this.totalPayable / this.installmentNumber;
+  this.remaningBalance = this.totalPayable;
   next();
 });
 // model

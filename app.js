@@ -40,7 +40,7 @@ app.use("/api/v1/stockTransfer", stockTransferRouter);
 app.use("/api/v1/loans", loanRouter);
 app.use("/api/v1/installments", installmentRouter);
 app.use("/", (req, res, next) => {
-  res.send("Welcome");
+  res.send("Welcome to ERP");
 });
 app.all("*", (req, res, next) => {
   next(new AppError(`can't find ${req.originalUrl} on this server`, 404));
