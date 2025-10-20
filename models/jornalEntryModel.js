@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Account = require("./accountingModel");
+
 const jornalEntrySchema = new mongoose.Schema(
   {
     jornalId: {
@@ -31,4 +32,5 @@ const jornalEntrySchema = new mongoose.Schema(
   { timestamps: true }
 );
 const JornalEntry = mongoose.model("JornalEntry", jornalEntrySchema);
+
 module.exports = JornalEntry;

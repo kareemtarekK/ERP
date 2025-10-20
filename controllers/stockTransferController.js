@@ -2,6 +2,7 @@ const StockTransfer = require("./../models/stockTransferModel");
 const AppError = require("./../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
 const Stock = require("./../models/stockModel");
+const Inventory = require("../models/inventoryModel");
 // create stock transfer
 exports.createStockTransfer = catchAsync(async (req, res, next) => {
   const stockTransfer = await StockTransfer.create(req.body);
@@ -12,16 +13,23 @@ exports.createStockTransfer = catchAsync(async (req, res, next) => {
       productId: product.productId,
       inventoryId: stockTransfer.from,
     });
+    const inventoryFrom = await Inventory.findById(stockTransfer.from);
+
     from.quantity -= product.unit;
+    inventoryFrom.capacity += product.unit;
+    await inventoryFrom.save({ validateBeforeSave: false });
     await from.save();
     const to = await Stock.findOne({
       productId: product.productId,
       inventoryId: stockTransfer.to,
     });
     to.quantity += product.unit;
+    const inventoryTo = await Inventory.findById(stockTransfer.to);
+    inventoryTo.capacity -= product.unit;
+    await inventoryTo.save({ validateBeforeSave: false });
     await to.save();
   }
-  // 3- create stock transfer
+  //3- create stock transfer
   res.status(201).json({
     status: "success",
     data: {

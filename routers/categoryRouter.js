@@ -5,8 +5,8 @@ const {
   getCategory,
   updateCategory,
   deleteCategory,
-} = require("./../controllers/categoryController");
-const categoryRouter = express();
+} = require("./../controllers/categorycontroller");
+const categoryRouter = express.Router();
 
 categoryRouter.route("/").post(createCategory).get(getAllCategories);
 categoryRouter
