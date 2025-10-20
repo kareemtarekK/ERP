@@ -6,8 +6,6 @@ const Inventory = require("../models/inventoryModel");
 // create stock transfer
 exports.createStockTransfer = catchAsync(async (req, res, next) => {
   const stockTransfer = await StockTransfer.create(req.body);
-  // 1- GET the transferer inventory and decrease the quantity
-  //     from.quantity -=
   for (let product of stockTransfer.products) {
     const from = await Stock.findOne({
       productId: product.productId,
