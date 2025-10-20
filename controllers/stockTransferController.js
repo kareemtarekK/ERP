@@ -3,7 +3,7 @@ const AppError = require("./../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
 const Stock = require("./../models/stockModel");
 const Inventory = require("../models/inventoryModel");
-//  create stock transfer
+//  1- create stock transfer
 exports.createStockTransfer = catchAsync(async (req, res, next) => {
   const stockTransfer = await StockTransfer.create(req.body);
   for (let product of stockTransfer.products) {
