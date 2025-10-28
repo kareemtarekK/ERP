@@ -1,4 +1,5 @@
 const PurchaseOrder = require("./../models/purchaseOrderModel");
+const Invoice = require("./../models/invoiceModel.js");
 const Inventory = require("./../models/inventoryModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
@@ -72,6 +73,62 @@ exports.getpurchase = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       purchase,
+    },
+  });
+});
+
+exports.getAllDraft = catchAsync(async (req, res, next) => {
+  const draftOrders = await PurchaseOrder.find({
+    status: "draft",
+  }).select("-__v");
+  res.status(200).json({
+    status: "success",
+    length: draftOrders.length,
+    data: {
+      draftOrders,
+    },
+  });
+});
+
+exports.markAsApproved = catchAsync(async (req, res, next) => {
+  const { purchaseOrderId } = req.params;
+  if (!purchaseOrderId)
+    return next(new AppError("provide purchase order id", 400));
+  const purchaseOrder = await PurchaseOrder.findById(purchaseOrderId);
+  if (!purchaseOrder)
+    return next(
+      new AppError("No purchase order with this id found on system", 404)
+    );
+  purchaseOrder.status = "approved";
+  await purchaseOrder.save({ validateBeforeSave: false });
+  res.status(200).json({
+    status: "success",
+    message: "purchase order has been approved successfully ✅",
+  });
+});
+
+exports.getAllApproved = catchAsync(async (req, res, next) => {
+  const approvedOrders = await PurchaseOrder.find({
+    status: "approved",
+  }).select("-__v");
+  res.status(200).json({
+    status: "success",
+    length: approvedOrders.length,
+    data: {
+      approvedOrders,
+    },
+  });
+});
+
+exports.getAllDelivered = catchAsync(async (req, res, next) => {
+  const deliveredOrders = await PurchaseOrder.find({
+    status: "delivered",
+  }).select("-__v");
+  res.status(200).json({
+    status: "success",
+    length: deliveredOrders.length,
+    data: {
+      deliveredOrders,
     },
   });
 });

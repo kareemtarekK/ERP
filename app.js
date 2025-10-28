@@ -18,6 +18,7 @@ const loanRouter = require("./routers/loanRouter.js");
 const installmentRouter = require("./routers/installmentRouter.js");
 const authRouter = require("./authRouters/authRouter");
 const saleOrderRouter = require("./routers/saleOrderRouter.js");
+const invoiceRouter = require("./routers/invoiceRouter.js");
 const globalErrorHandling = require("./utils/globalErrorHandling");
 const AppError = require("./utils/appError");
 const cookieParser = require("cookie-parser");
@@ -41,6 +42,7 @@ app.use("/api/v1/stockTransfer", stockTransferRouter);
 app.use("/api/v1/loans", loanRouter);
 app.use("/api/v1/installments", installmentRouter);
 app.use("/api/v1/saleOrders", saleOrderRouter);
+app.use("/api/v1/purchaseInvoices", invoiceRouter);
 app.use("/", (req, res, next) => {
   res.send("Welcome to ERP");
 });

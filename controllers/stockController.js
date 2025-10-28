@@ -99,7 +99,8 @@ exports.deleteStock = catchAsync(async (req, res, next) => {
 //     },
 //   });
 // });
-exports.stockIn = catchAsync(async (req, res, next) => {
+
+exports.checkDeliveredQuantity = catchAsync(async (req, res, next) => {
   const { purchaseOrderId } = req.params;
   if (!purchaseOrderId)
     return next(new AppError("Order id is not provided", 500));
@@ -111,61 +112,89 @@ exports.stockIn = catchAsync(async (req, res, next) => {
         500
       )
     );
-  let stock, stockMovement;
-  const { products } = purchaseOrder;
+  const { products } = req.body;
   for (let product of products) {
-    const { inventoryId, productId, quantity } = product;
+    const { products } = purchaseOrder;
+    const pro = products.find((p) => p.productId == product.productId);
+    pro.deliveredQuantity = product.deliveredQuantity;
+    await purchaseOrder.save({ validateBeforeSave: false });
+  }
+  purchaseOrder.products = await Promise.all(
+    purchaseOrder.products.map(async (item) => {
+      item.total = item.deliveredQuantity * item.price;
+      item.total = item.total - (item.discount * item.total) / 100;
+      item.remainingQuantity = item.remainingQuantity - item.deliveredQuantity;
+      return item;
+    })
+  );
+  purchaseOrder.totalAmount = purchaseOrder.products.reduce(
+    (acc, current) => acc + current.total,
+    0
+  );
+  await PurchaseOrder.findByIdAndUpdate(purchaseOrderId, {
+    products: purchaseOrder.products,
+    totalAmount: purchaseOrder.totalAmount,
+  });
+
+  req.order = purchaseOrder;
+  req.products = req.body;
+  next();
+});
+
+exports.stockIn = catchAsync(async (req, res, next) => {
+  let stock;
+  const { products } = req;
+  for (let product of products) {
+    const { inventoryId, productId, deliveredQuantity } = product;
     stock = await Stock.findOne({ productId, inventoryId });
     if (stock) {
       const inventory = await Inventory.findById(inventoryId);
-      stock.quantity += quantity;
+      stock.quantity += deliveredQuantity;
       await stock.save({ validateBeforeSave: false });
-      inventory.capacity -= quantity;
+      inventory.capacity -= deliveredQuantity;
       await inventory.save({ validateBeforeSave: false });
     } else {
-      stock = await Stock.create({ productId, inventoryId, quantity });
+      stock = await Stock.create({
+        productId,
+        inventoryId,
+        quantity: deliveredQuantity,
+      });
       const inventory = await Inventory.findById(inventoryId);
-      inventory.capacity -= quantity;
+      inventory.capacity -= deliveredQuantity;
       await inventory.save({ validateBeforeSave: false });
-    }
-    const movement = await StockMovement.findOne({
-      inventoryId,
-      productId,
-    });
-    if (movement) {
-      stockMovement = await StockMovement.create({
-        productId,
-        inventoryId,
-        orderType: "PurchaseOrder",
-        referenceId: purchaseOrderId,
-        type: "IN",
-        oldQuantity: movement.newQuantity,
-        quantity,
-        newQuantity: movement.newQuantity + quantity,
-      });
-    } else {
-      stockMovement = await StockMovement.create({
-        productId,
-        inventoryId,
-        orderType: "PurchaseOrder",
-        referenceId: purchaseOrderId,
-        type: "IN",
-        quantity,
-        newQuantity: quantity,
-      });
     }
   }
   // update purchase order status to delivered
-  const updatedPurchaseOrder = await PurchaseOrder.findByIdAndUpdate(
-    purchaseOrderId,
-    { status: "delivered" },
-    {
-      new: true,
-    }
+  const totalRemaining = req.order.products.reduce(
+    (acc, cur) => acc + cur.remainingQuantity,
+    0
   );
+  let updatedPurchaseOrder = await PurchaseOrder.findById(req.order._id);
+  if (totalRemaining === 0) {
+    const { products } = req.order;
+    products.map((product) => {
+      product.deliveredQuantity = product.quantity;
+      product.total = product.quantity * product.price;
+    });
+    const totalAmount = products.reduce(
+      (acc, current) => acc + current.total,
+      0
+    );
+    updatedPurchaseOrder = await PurchaseOrder.findByIdAndUpdate(
+      req.order._id,
+      {
+        status: "delivered",
+        products,
+        totalAmount,
+      },
+      {
+        new: true,
+      }
+    );
+  }
 
   const jornal = await Jornal.findOne({ jornalType: "purchases" });
-  const accountPurchase = await Account.findOne({ name: "purchase-expense" });
+  const accountPurchase = await Account.findOne({ name: "purchases-expense" });
   const accountBank = await Account.findOne({ name: "cash/bank" });
 
   await JornalEntry.create({
@@ -173,14 +202,14 @@ exports.stockIn = catchAsync(async (req, res, next) => {
     lines: [
       {
         accountId: accountPurchase._id,
-        description: `Records purchases made ${purchaseOrder.totalAmount} for stocking inventory`,
+        description: `Records purchases made ${req.order.totalAmount} for stocking inventory`,
         debit: 0,
-        credit: purchaseOrder.totalAmount,
+        credit: req.order.totalAmount,
       },
       {
         accountId: accountBank._id,
-        description: `Tracks cash paid ${purchaseOrder.totalAmount} for purchasing inventory stock`,
-        debit: purchaseOrder.totalAmount,
+        description: `Tracks cash paid ${req.order.totalAmount} for purchasing inventory stock`,
+        debit: req.order.totalAmount,
         credit: 0,
       },
     ],
