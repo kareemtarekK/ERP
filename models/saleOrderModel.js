@@ -28,6 +28,7 @@ const saleOrderSchema = new mongoose.Schema(
           required: [true, "enter the name of product"],
           trim: true,
         },
+        code: Number,
         quantity: {
           type: Number,
           required: [true, "enter quantity"],
@@ -38,6 +39,7 @@ const saleOrderSchema = new mongoose.Schema(
           required: [true, "enter price of the product"],
         },
         discount: Number,
+        tax: Number,
         total: Number,
         inventoryId: {
           type: mongoose.Schema.Types.ObjectId,
@@ -61,6 +63,7 @@ const saleOrderSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "sale order must have a creator"],
     },
+    shippingCost: Number,
     totalAmount: Number,
   },
   { timestamps: true }
@@ -70,12 +73,12 @@ saleOrderSchema.pre("save", function (next) {
   this.products = this.products.map((item) => {
     item.total = item.quantity * item.price;
     item.total = item.total - (item.discount * item.total) / 100;
+    item.total = item.total + item.total * item.tax;
     return item;
   });
-  this.totalAmount = this.products.reduce(
-    (acc, current) => acc + current.total,
-    0
-  );
+  this.totalAmount =
+    this.shippingCost +
+    this.products.reduce((acc, current) => acc + current.total, 0);
   const randomNum = Math.floor(Math.random() * 600000);
   this.invoiceNumber = `INV-${randomNum}-000`;
   next();
