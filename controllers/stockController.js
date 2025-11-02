@@ -2,6 +2,7 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Stock = require("./../models/stockModel");
 const PurchaseOrder = require("./../models/purchaseOrderModel");
+const SaleOrder = require("./../models/saleOrderModel");
 const StockMovement = require("./../models/stockMovementModel");
 const Inventory = require("../models/inventoryModel");
 const Jornal = require("../models/jornalModel");
@@ -121,6 +122,19 @@ exports.checkDeliveredQuantity = catchAsync(async (req, res, next) => {
   }
   purchaseOrder.products = await Promise.all(
     purchaseOrder.products.map(async (item) => {
+      if (
+        item.deliveredQuantity > item.remainingQuantity &&
+        item.remainingQuantity != 0
+      ) {
+        throw new Error(
+          `Delivered quantity (${
+            item.deliveredQuantity
+          }) cannot exceed remaining quantity (${
+            item.remainingQuantity
+          }) for product ${item.name || item._id}`
+        );
+      }
+      
       item.total = item.deliveredQuantity * item.price;
       item.total = item.total - (item.discount * item.total) / 100;
       item.remainingQuantity = item.remainingQuantity - item.deliveredQuantity;

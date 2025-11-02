@@ -8,6 +8,17 @@ const Jornal = require("./../models/jornalModel");
 const Account = require("./../models/accountingModel");
 
 exports.createSaleOrder = catchAsync(async (req, res, next) => {
+  const { products } = req.body;
+  for (let product of products) {
+    const stock = await Stock.findOne({
+      productId: product.productId,
+      inventoryId: product.inventoryId,
+    });
+    if (product.quantity > stock.quantity)
+      return next(
+        new AppError("our stock is not enough to sale this amount", 500)
+      );
+  }
   const saleOrder = await SaleOrder.create(req.body);
   res.status(201).json({
     status: "success",
@@ -74,5 +85,54 @@ exports.deleteSaleOrder = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: "success",
     data: null,
+  });
+});
+
+exports.getAllDraftedSaleOrders = catchAsync(async (req, res, next) => {
+  const saleOrders = await SaleOrder.find({ status: "draft" }).select("-__v");
+  res.status(200).json({
+    status: "success",
+    data: {
+      saleOrders,
+    },
+  });
+});
+
+exports.updatedSaleOrderIntoApproved = catchAsync(async (req, res, next) => {
+  const { saleOrderId } = req.params;
+  if (!saleOrderId) return next(new AppError("400", "enter sale order id"));
+  const saleOrder = await SaleOrder.findById(saleOrderId);
+  if (!saleOrder)
+    return next(new AppError("sale Order not found on the system", 404));
+  await SaleOrder.findByIdAndUpdate(saleOrderId, {
+    status: "approved",
+  });
+  res.status(200).json({
+    status: "success",
+    message: "sale order became approved",
+  });
+});
+
+exports.getAllApprovedSaleOrders = catchAsync(async (req, res, next) => {
+  const approvedSaleOrders = await SaleOrder.find({
+    status: "approved",
+  }).select("-__v");
+  res.status(200).json({
+    status: "success",
+    data: {
+      approvedSaleOrders,
+    },
+  });
+});
+
+exports.getAllDelivered = catchAsync(async (req, res, next) => {
+  const deliveredSaleOrders = await SaleOrder.find({
+    status: "delivered",
+  }).select("-__v");
+  res.status(200).json({
+    status: "success",
+    data: {
+      deliveredSaleOrders,
+    },
   });
 });

@@ -14,7 +14,9 @@ const {
   checkDeliveredQuantity,
   stockIn,
 } = require("./../controllers/stockController");
-const { createInvoice } = require("./../controllers/invoiceController.js");
+const {
+  createInvoice,
+} = require("../controllers/purchaseInvoiceController.js");
 const router = express.Router();
 
 router.get("/status=draft", getAllDraft);

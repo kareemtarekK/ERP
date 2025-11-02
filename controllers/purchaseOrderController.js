@@ -1,5 +1,5 @@
 const PurchaseOrder = require("./../models/purchaseOrderModel");
-const Invoice = require("./../models/invoiceModel.js");
+const Invoice = require("../models/purchaseInvoiceModel.js");
 const Inventory = require("./../models/inventoryModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
@@ -66,6 +66,7 @@ exports.getAllPurchases = catchAsync(async (req, res, next) => {
     },
   });
 });
+
 // get purchase
 exports.getpurchase = catchAsync(async (req, res, next) => {
   const purchase = await PurchaseOrder.findById(req.params.purchaseOrderId);
