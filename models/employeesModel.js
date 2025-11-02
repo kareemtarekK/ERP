@@ -79,6 +79,6 @@ const employeesSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Employee = mongoose.Model("Employee", employeesSchema);
+const Employee = mongoose.model("Employee", employeesSchema);
 
 module.exports = Employee;

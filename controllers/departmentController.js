@@ -39,7 +39,7 @@ exports.getDepartment = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateDepartment = catchAysnc(async (req, res, next) => {
+exports.updateDepartment = catchAsync(async (req, res, next) => {
   const { departmentId } = req.params;
   if (!departmentId) return next(new AppError("provide employee id", 400));
   const department = await Department.findById(departmentId);
