@@ -13,6 +13,7 @@ const organizationSchema = new mongoose.Schema(
       required: [true, "Enter address"],
       trim: true,
     },
+    locations: Array,
     country: {
       type: String,
       required: [true, "Enter organization's country"],

@@ -20,6 +20,9 @@ const authRouter = require("./authRouters/authRouter");
 const saleOrderRouter = require("./routers/saleOrderRouter.js");
 const purchaseInvoiceRouter = require("./routers/purchaseInvoiceRouter.js");
 const saleOrderInvoiceRouter = require("./routers/saleOrderInvoiceRouter.js");
+const employeeRouter = require("./routers/employeeRouter.js");
+const departmentRouter = require("./routers/departmentRouter.js");
+const roleRouter = require("./routers/roleRouter.js");
 const globalErrorHandling = require("./utils/globalErrorHandling");
 const AppError = require("./utils/appError");
 const cookieParser = require("cookie-parser");
@@ -45,6 +48,8 @@ app.use("/api/v1/installments", installmentRouter);
 app.use("/api/v1/saleOrders", saleOrderRouter);
 app.use("/api/v1/purchaseInvoices", purchaseInvoiceRouter);
 app.use("/api/v1/saleInvoices", saleOrderInvoiceRouter);
+app.use("/api/v1/employees", employeeRouter);
+app.use("/api/v1/roles", roleRouter);
 app.use("/", (req, res, next) => {
   res.send("Welcome to ERP");
 });

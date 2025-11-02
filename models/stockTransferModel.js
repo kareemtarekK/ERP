@@ -32,6 +32,7 @@ const stockTransferSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
 // stockTransferSchema.pre("save", async function (next) {
 //   const totalArray = await Promise.all(
 //     this.products.map(
