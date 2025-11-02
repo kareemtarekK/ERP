@@ -40,6 +40,7 @@ const purchaseOrderSchema = new mongoose.Schema(
             return this.quantity;
           },
         },
+        //
         price: {
           type: Number,
           required: [true, "Product price is required"],
