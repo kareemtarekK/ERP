@@ -34,7 +34,7 @@ const handleValidationError = (err, res) => {
 };
 // send error response for development
 const sendErrorDev = (err, res) => {
-  return res.status(err.statusCode).json({
+  return res.status(err.statusCode || 500).json({
     err,
     status: err.status,
     message: err.message,
@@ -44,7 +44,7 @@ const sendErrorDev = (err, res) => {
 const sendErrorProd = (err, res) => {
   // ckeck if error is operational error or not
   if (err.isOperational) {
-    return res.status(err.statusCode).json({
+    return res.status(err.statusCode || 500).json({
       status: err.status,
       message: err.message,
     });

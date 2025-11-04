@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("./../controllers/upload");
 const {
   createEmployee,
   getAllEmployees,
@@ -9,7 +10,10 @@ const {
 
 const router = express();
 
-router.route("/").post(createEmployee).get(getAllEmployees);
+router
+  .route("/")
+  .post(upload.single("avatar"), createEmployee)
+  .get(getAllEmployees);
 
 router
   .route("/:employeeId")

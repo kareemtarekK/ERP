@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("./../controllers/upload.js");
 const {
   createProduct,
   getAllProducts,
@@ -10,7 +11,10 @@ const {
 } = require("./../controllers/productController.js");
 const productRouter = express.Router();
 
-productRouter.route("/").get(getAllProducts).post(createProduct);
+productRouter
+  .route("/")
+  .get(getAllProducts)
+  .post(upload.array("img"), createProduct);
 productRouter.get("/search", searchProduct);
 productRouter.get("/:categoryId/products", allProductsForCategory);
 productRouter

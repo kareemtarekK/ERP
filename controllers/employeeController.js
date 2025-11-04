@@ -3,6 +3,7 @@ const AppError = require("./../utils/appError");
 const Employee = require("./../models/employeesModel");
 
 exports.createEmployee = catchAysnc(async (req, res, next) => {
+  req.body.avatar = req.file.path;
   const employee = await Employee.create(req.body);
   res.status(201).json({
     status: "success",

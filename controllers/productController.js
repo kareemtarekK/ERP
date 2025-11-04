@@ -2,6 +2,7 @@ const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const Product = require("../models/productModel.js");
 exports.createProduct = catchAsync(async (req, res, next) => {
+  req.body.img = req.files.map((img) => img.path);
   const newProduct = await Product.create(req.body);
   res.status(201).json({
     status: "success",
