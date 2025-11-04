@@ -3,6 +3,7 @@ const AppError = require("./../utils/appError.js");
 const catchAsync = require("./../utils/catchAsync");
 // create inventory
 exports.createInventory = catchAsync(async (req, res, next) => {
+  req.body.avatar = req.file.path;
   const newInventory = await Inventory.create(req.body);
   res.status(201).json({
     status: "success",

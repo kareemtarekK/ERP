@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("./../controllers/upload.js");
 const {
   createInventory,
   getAllInventories,
@@ -12,7 +13,10 @@ const {
 } = require("./../controllers/stockController.js");
 const inventoryRouter = express.Router();
 
-inventoryRouter.route("/").post(createInventory).get(getAllInventories);
+inventoryRouter
+  .route("/")
+  .post(upload.single("avatar"), createInventory)
+  .get(getAllInventories);
 
 inventoryRouter
   .route("/:inventoryId")

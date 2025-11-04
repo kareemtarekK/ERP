@@ -6,6 +6,7 @@ const inventorySchema = new mongoose.Schema(
       required: [true, "enter inventory name"],
       trim: true,
     },
+    avatar: String,
     location: {
       type: String,
       required: [true, "enter inventory location"],
