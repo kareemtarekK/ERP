@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+
 const userRouter = require("./routers/userRouter");
 const organizationRouter = require("./routers/organizationRouter");
 const productRouter = require("./routers/productRouter.js");
@@ -23,12 +24,15 @@ const saleOrderInvoiceRouter = require("./routers/saleOrderInvoiceRouter.js");
 const employeeRouter = require("./routers/employeeRouter.js");
 const departmentRouter = require("./routers/departmentRouter.js");
 const roleRouter = require("./routers/roleRouter.js");
+const attendanceRouter = require("./routers/attendanceRouter.js");
+const { createAttendence } = require("./controllers/attendanceController.js");
 const globalErrorHandling = require("./utils/globalErrorHandling");
 const AppError = require("./utils/appError");
 const cookieParser = require("cookie-parser");
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
+createAttendence();
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/organizations", organizationRouter);
@@ -50,6 +54,8 @@ app.use("/api/v1/purchaseInvoices", purchaseInvoiceRouter);
 app.use("/api/v1/saleInvoices", saleOrderInvoiceRouter);
 app.use("/api/v1/employees", employeeRouter);
 app.use("/api/v1/roles", roleRouter);
+app.use("/api/v1/attendances", attendanceRouter);
+
 app.use("/", (req, res, next) => {
   res.send("Welcome to ERP");
 });

@@ -35,6 +35,10 @@ const employeesSchema = new mongoose.Schema(
       type: String,
       required: [true, "select your work location"],
     },
+    shift: {
+      start: Date,
+      end: Date,
+    },
     role: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Role",
