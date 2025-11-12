@@ -39,6 +39,7 @@ const employeesSchema = new mongoose.Schema(
       start: Date,
       end: Date,
     },
+    bonus: Number,
     role: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Role",

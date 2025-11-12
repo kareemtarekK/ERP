@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Employee = require("./../models/employeesModel");
+const Payroll = require("./payrollModel");
 const attendanceSchema = new mongoose.Schema(
   {
     employee: {
@@ -23,7 +24,7 @@ const attendanceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-attendanceSchema.pre("save", async (req, res, next) => {
+attendanceSchema.pre("save", async function (next) {
   if (this.checkIn && this.checkOut) {
     this.totalHours = (this.checkOut - this.checkIn) / (1000 * 60 * 60);
     const employee = await Employee.findById(this.employee);
@@ -35,6 +36,17 @@ attendanceSchema.pre("save", async (req, res, next) => {
     if (this.totalHours - fixedHours < 0) {
       this.deduction = this.totalHours - fixedHours;
     }
+    const payroll = await Payroll.findOne({ employee: this.employee });
+
+    const { bonus, salary, shift } = await Employee.findById(this.employee);
+    const fixedHour = (shift.end - shift.start) / (1000 * 60 * 60);
+    const moneyHour = salary / (22 * fixedHour);
+    payroll.overtime += this.overtime * moneyHour;
+    payroll.deduction.amount += this.deduction * moneyHour;
+    payroll.bonus.amount = employee.bonus;
+    payroll.total =
+      this.overtime * moneyHour + this.deduction * moneyHour + salary + bonus;
+    await payroll.save();
   }
   next();
 });

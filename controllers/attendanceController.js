@@ -1,6 +1,7 @@
 const cron = require("node-cron");
 const Employees = require("./../models/employeesModel");
 const Attendance = require("./../models/attendanceModel");
+const Payroll = require("./../models/payrollModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 exports.createAttendence = () => {

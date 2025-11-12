@@ -1,10 +1,16 @@
 const catchAysnc = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const Employee = require("./../models/employeesModel");
+const Payroll = require("./../models/payrollModel");
 
 exports.createEmployee = catchAysnc(async (req, res, next) => {
   req.body.avatar = req.file.path;
   const employee = await Employee.create(req.body);
+  await Payroll.create({
+    employee: employee._id,
+    date: new Date(`30-${new Date().getMonth()}`),
+    salary: employee.salary,
+  });
   res.status(201).json({
     status: "success",
     data: {
