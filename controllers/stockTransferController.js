@@ -161,7 +161,7 @@ exports.changeDraftStatusIntoShipping = catchAsync(async (req, res, next) => {
   }
 
   const jornal = await Jornal.findOne({ jornalType: "stock-transfer" });
-  const accountExpense = await Jornal.findOne({ name: "purachses-expenses" });
+  const accountExpense = await Jornal.findOne({ name: "shipping" });
   const accountBank = await Jornal.findOne({ name: "cash/bank" });
 
   await JornalEntry.create({
@@ -170,14 +170,14 @@ exports.changeDraftStatusIntoShipping = catchAsync(async (req, res, next) => {
       {
         accountId: accountExpense._id,
         description: `Records shipping cost ${transferOrder.shippingCost} for stock transfer`,
-        debit: 0,
-        credit: transferOrder.shippingCost,
+        debit: transferOrder.shippingCost,
+        credit: 0,
       },
       {
         accountId: accountBank._id,
         description: `Tracks cash paid ${transferOrder.shippingCost} for stock transfer`,
-        debit: transferOrder.shippingCost,
-        credit: 0,
+        debit: 0,
+        credit: transferOrder.shippingCost,
       },
     ],
   });

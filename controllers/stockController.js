@@ -134,7 +134,7 @@ exports.checkDeliveredQuantity = catchAsync(async (req, res, next) => {
           }) for product ${item.name || item._id}`
         );
       }
-      
+
       item.total = item.deliveredQuantity * item.price;
       item.total = item.total - (item.discount * item.total) / 100;
       item.remainingQuantity = item.remainingQuantity - item.deliveredQuantity;
@@ -209,7 +209,7 @@ exports.stockIn = catchAsync(async (req, res, next) => {
 
   const jornal = await Jornal.findOne({ jornalType: "purchases" });
   const accountPurchase = await Account.findOne({ name: "purchases-expense" });
-  const accountBank = await Account.findOne({ name: "cash/bank" });
+  const accountBank = await Account.findOne({ name: "supplier (AP)" });
 
   await JornalEntry.create({
     jornalId: jornal._id,
@@ -217,14 +217,14 @@ exports.stockIn = catchAsync(async (req, res, next) => {
       {
         accountId: accountPurchase._id,
         description: `Records purchases made ${req.order.totalAmount} for stocking inventory`,
-        debit: 0,
-        credit: req.order.totalAmount,
+        debit: req.order.totalAmount,
+        credit: 0,
       },
       {
         accountId: accountBank._id,
         description: `Tracks cash paid ${req.order.totalAmount} for purchasing inventory stock`,
-        debit: req.order.totalAmount,
-        credit: 0,
+        debit: 0,
+        credit: req.order.totalAmount,
       },
     ],
   });
@@ -263,7 +263,7 @@ exports.stockOut = catchAsync(async (req, res, next) => {
   const jornal = await Jornal.findOne({ jornalType: "sales" });
   const accountRevenue = await Jornal.findOne({ name: "sales-revenue" });
   const accountCustomerReceivable = await Jornal.findOne({
-    name: "customer-receivable",
+    name: "cash/bank",
   });
   await JornalEntry.create({
     jornalId: jornal._id,

@@ -15,7 +15,9 @@ const {
   getAllAccounts,
   createAccount,
   deleteAccount,
+  getAllJornalEntries,
 } = require("./../controllers/accountController");
 accountRouter.route("/").get(getAllAccounts).post(createAccount);
 accountRouter.delete("/:accountId", deleteAccount);
+accountRouter.get("/:accountId/jornalEntries", getAllJornalEntries);
 module.exports = accountRouter;

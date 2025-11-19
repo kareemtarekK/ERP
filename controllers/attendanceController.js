@@ -5,7 +5,7 @@ const Payroll = require("./../models/payrollModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 exports.createAttendence = () => {
-  cron.schedule("*/5 * * * * *", async (req, res, next) => {
+  cron.schedule("0 9 * * 0-4", async (req, res, next) => {
     const employees = await Employees.find();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -21,6 +21,19 @@ exports.createAttendence = () => {
           status: "absent",
         });
       }
+    }
+  });
+};
+
+exports.createMonthlyPayrolls = () => {
+  cron.schedule("0 0 1 * *", async (req, res, next) => {
+    const employees = await Employees.find();
+    for (let employee of employees) {
+      await Payroll.create({
+        employee: employee._id,
+        date: new Date(new Date().getFullYear(), new Date().getMonth(), 30),
+        salary: employee.salary,
+      });
     }
   });
 };

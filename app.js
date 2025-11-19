@@ -26,14 +26,19 @@ const departmentRouter = require("./routers/departmentRouter.js");
 const roleRouter = require("./routers/roleRouter.js");
 const attendanceRouter = require("./routers/attendanceRouter.js");
 const payrollRouter = require("./routers/payrollRouter.js");
-const { createAttendence } = require("./controllers/attendanceController.js");
+const {
+  createAttendence,
+  createMonthlyPayrolls,
+} = require("./controllers/attendanceController.js");
 const globalErrorHandling = require("./utils/globalErrorHandling");
 const AppError = require("./utils/appError");
 const cookieParser = require("cookie-parser");
+const purchaseInvoicePaymentRouter = require("./routers/purchaseInvoicePaymentRouter.js");
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 createAttendence();
+createMonthlyPayrolls();
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/organizations", organizationRouter);
@@ -50,6 +55,7 @@ app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/stockTransfer", stockTransferRouter);
 app.use("/api/v1/loans", loanRouter);
 app.use("/api/v1/installments", installmentRouter);
+app.use("/api/v1/departments", departmentRouter);
 app.use("/api/v1/saleOrders", saleOrderRouter);
 app.use("/api/v1/purchaseInvoices", purchaseInvoiceRouter);
 app.use("/api/v1/saleInvoices", saleOrderInvoiceRouter);
@@ -57,6 +63,7 @@ app.use("/api/v1/employees", employeeRouter);
 app.use("/api/v1/roles", roleRouter);
 app.use("/api/v1/attendances", attendanceRouter);
 app.use("/api/v1/payrolls", payrollRouter);
+app.use("/api/v1/invoice-pay", purchaseInvoicePaymentRouter);
 
 app.use("/", (req, res, next) => {
   res.send("Welcome to ERP");

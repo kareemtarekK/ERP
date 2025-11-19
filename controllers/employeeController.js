@@ -8,7 +8,7 @@ exports.createEmployee = catchAysnc(async (req, res, next) => {
   const employee = await Employee.create(req.body);
   await Payroll.create({
     employee: employee._id,
-    date: new Date(`30-${new Date().getMonth()}`),
+    date: new Date(new Date().getFullYear(), new Date().getMonth(), 30),
     salary: employee.salary,
   });
   res.status(201).json({
