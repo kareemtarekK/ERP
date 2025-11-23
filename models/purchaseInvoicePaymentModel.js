@@ -15,9 +15,9 @@ const purchaseInvoicePaymentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const PurchaseInvoicePayment = mongoose.model(
-  "PurchaseInvoicePayment",
+const InvoicePayment = mongoose.model(
+  "InvoicePayment",
   purchaseInvoicePaymentSchema
 );
 
-module.exports = PurchaseInvoicePayment;
+module.exports = InvoicePayment;

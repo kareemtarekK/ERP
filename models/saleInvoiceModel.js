@@ -56,8 +56,5 @@ const saleOrderInvoiceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const SaleOrderInvoice = mongoose.model(
-  "SaleOrderInvoice",
-  saleOrderInvoiceSchema
-);
-module.exports = SaleOrderInvoice;
+const SaleInvoice = mongoose.model("SaleInvoice", saleOrderInvoiceSchema);
+module.exports = SaleInvoice;

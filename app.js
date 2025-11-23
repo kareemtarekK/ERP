@@ -26,6 +26,7 @@ const departmentRouter = require("./routers/departmentRouter.js");
 const roleRouter = require("./routers/roleRouter.js");
 const attendanceRouter = require("./routers/attendanceRouter.js");
 const payrollRouter = require("./routers/payrollRouter.js");
+const statsRouter = require("./routers/statsRouter.js");
 const {
   createAttendence,
   createMonthlyPayrolls,
@@ -64,6 +65,7 @@ app.use("/api/v1/roles", roleRouter);
 app.use("/api/v1/attendances", attendanceRouter);
 app.use("/api/v1/payrolls", payrollRouter);
 app.use("/api/v1/invoice-pay", purchaseInvoicePaymentRouter);
+app.use("/api/v1/stats", statsRouter);
 
 app.use("/", (req, res, next) => {
   res.send("Welcome to ERP");

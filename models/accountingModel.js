@@ -30,6 +30,7 @@ const accountingSchema = new mongoose.Schema(
       require: [true, "code is required"],
       unique: true,
     },
+    amount: Number,
   },
   { timestamps: true }
 );
