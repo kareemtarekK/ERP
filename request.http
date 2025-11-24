@@ -1,1 +1,29 @@
-GET http://127.0.0.1:5000/api/v1/stats
+POST http://127.0.0.1:5000/api/v1/representatives http/1.1
+content-type: application/json
+
+{
+    "name": "anwar",
+    "phone": "+201212275690",
+    "region": "cairo"
+}
+
+###
+http://127.0.0.1:5000/api/v1/representatives
+
+
+###
+http://127.0.0.1:5000/api/v1/representatives/69245b06ee4ee3eb05ed438b
+
+###
+PATCH http://127.0.0.1:5000/api/v1/representatives/69245b06ee4ee3eb05ed438b http/1.1
+content-type:application/json
+
+{
+    "region" : "alex"
+}
+
+
+###
+DELETE  http://127.0.0.1:5000/api/v1/representatives/69245b06ee4ee3eb05ed438b http/1.1
+
+
