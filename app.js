@@ -28,6 +28,10 @@ const attendanceRouter = require("./routers/attendanceRouter.js");
 const payrollRouter = require("./routers/payrollRouter.js");
 const statsRouter = require("./routers/statsRouter.js");
 const representativeRouter = require("./routers/representativeRouter.js");
+const mobileStockRouter = require("./routers/mobileStockRouter.js");
+const tripRouter = require("./routers/tripRouter.js");
+const tripInvoiceRouter = require("./routers/tripInvoiceRouter.js");
+const saleOrderInTripRouter = require("./routers/saleOrderInTripRouter.js");
 const {
   createAttendence,
   createMonthlyPayrolls,
@@ -68,6 +72,10 @@ app.use("/api/v1/payrolls", payrollRouter);
 app.use("/api/v1/invoice-pay", purchaseInvoicePaymentRouter);
 app.use("/api/v1/stats", statsRouter);
 app.use("/api/v1/representatives", representativeRouter);
+app.use("/api/v1/mobileStocks", mobileStockRouter);
+app.use("/api/v1/trips", tripRouter);
+app.use("/api/v1/trip-invoices", tripInvoiceRouter);
+app.use("/api/v1/salesTrip", saleOrderInTripRouter);
 
 app.use("/", (req, res, next) => {
   res.send("Welcome to ERP");
